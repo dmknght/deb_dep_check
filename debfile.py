@@ -522,6 +522,7 @@ class DebPackage(object):
         self._sections["Architecture"] = arch
         self._sections["Package"] = package
         self._sections["Version"] = version
+        self.pkgname = package
 
         self._check_was_run = True
 
@@ -550,7 +551,7 @@ class DebPackage(object):
                 # the deb is older than the installed
                 self._failure_string = _(
                     "A later version is already installed")
-                return False
+                return True
 
         # FIXME: this sort of error handling sux
         self._failure_string = ""
