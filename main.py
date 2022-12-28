@@ -41,20 +41,6 @@ class DebPackage(apt.debfile.DebPackage):
         return self._sections[item]
 
 
-# just for compatibility
-class DscSrcPackage(apt.debfile.DscSrcPackage):
-    pass
-
-
-class ClickPackage(DebPackage):
-    """Basic support to view the new ubuntu click packages, more to come"""
-
-    def check(self):
-        self._failure_string = _(
-            "Click packages can currently only be inspected with this tool")
-        return False
-
-
 class GDebiCli(object):
     def __init__(self):
         tp = apt.progress.base.OpProgress()
@@ -64,8 +50,6 @@ class GDebiCli(object):
         try:
             if file.endswith(".deb"):
                 self._deb = DebPackage(file, self._cache)
-            elif file.endswith(".dsc") or os.path.basename(file) == "control":
-                self._deb = DscSrcPackage(file, self._cache)
             else:
                 sys.stderr.write(_("Unknown package type '%s', exiting\n") % file)
                 sys.exit(1)
