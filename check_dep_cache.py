@@ -26,10 +26,9 @@ if __name__ == "__main__":
             for real_pkg_depends in apt_cache_pkg_version.dependencies:
                 list_depends.append([(x.name, x.version, x.relation) for x in real_pkg_depends])
             deb = debfile.DebPackage()
-            if apt_cache_pkg_version.package.name:
-                if not deb.check(list_depends, apt_cache_pkg_version.architecture, apt_cache_pkg_version.package.name, apt_cache_pkg_version.version):
-                    print("Package:", pkg.name)
-                    print("Version", apt_cache_pkg_version.version)
-                    print(deb._failure_string)
-                    print("")
+            if not deb.check(list_depends, apt_cache_pkg_version.architecture, pkg.name, apt_cache_pkg_version.version):
+                print("Package:", pkg.name)
+                print("Version", apt_cache_pkg_version.version)
+                print(deb._failure_string)
+                print("")
 
