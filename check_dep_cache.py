@@ -36,8 +36,9 @@ class DebPackage:
         for depends in package_version.dependencies:
             self.depends.append([(x.name, x.version, x.relation) for x in depends])
 
-    def _show_dependency_errors(self, error_string, version):
+    def _show_dependency_errors(self, error_string, version, branch):
         print("Package: ", self.package_name)
+        print("Branch: ", branch)
         print("Version: ", version)
         print("Error: ", error_string)
         print("------------------")
@@ -51,7 +52,7 @@ class DebPackage:
         for package_version in self._iterate_package_versions():
             self._get_depends(package_version)
             if not deb_pointer.check(self.depends, package_version.architecture, self.package_name, package_version.version):
-                self._show_dependency_errors(deb_pointer._failure_string, package_version)
+                self._show_dependency_errors(deb_pointer._failure_string, package_version, package_version.origins[0].archive)
 
 
 if __name__ == "__main__":
@@ -59,7 +60,8 @@ if __name__ == "__main__":
     # Open cache. Now the apt_cache should have list of packages
     # Possible to pass apt.progress.base.OpProgress() as arg to apt_cache.open to have silent mode
     apt_cache.open(None)
-    for pkg in apt_cache:
-        DebPackage(apt_cache, pkg.name)
+    DebPackage(apt_cache, "adb")
+    # for pkg in apt_cache:
+    #     DebPackage(apt_cache, pkg.name)
 
     print("Check completed")
