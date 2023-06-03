@@ -60,8 +60,7 @@ if __name__ == "__main__":
     # Open cache. Now the apt_cache should have list of packages
     # Possible to pass apt.progress.base.OpProgress() as arg to apt_cache.open to have silent mode
     apt_cache.open(None)
-    DebPackage(apt_cache, "adb")
-    # for pkg in apt_cache:
-    #     DebPackage(apt_cache, pkg.name)
+    for pkg in apt_cache:
+        DebPackage(apt_cache, pkg.name)
 
     print("Check completed")
