@@ -39,7 +39,7 @@ class DebPackage:
     def _show_dependency_errors(self, error_string, version):
         print("Package: ", self.package_name)
         print("Version: ", version)
-        print(error_string)
+        print("Error: ", error_string)
         print("------------------")
 
     def check_package_issue(self):
