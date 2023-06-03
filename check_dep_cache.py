@@ -61,3 +61,5 @@ if __name__ == "__main__":
     apt_cache.open(None)
     for pkg in apt_cache:
         DebPackage(apt_cache, pkg.name)
+
+    print("Check completed")
