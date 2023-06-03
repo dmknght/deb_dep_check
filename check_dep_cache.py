@@ -49,7 +49,7 @@ class DebPackage:
         deb_pointer = debfile.DebPackage()
         for package_version in self._iterate_package_versions():
             self._get_depends(package_version)
-            if not deb_pointer.check(self.depends, package_version.architecture, self.package_name, package_version):
+            if not deb_pointer.check(self.depends, package_version.architecture, self.package_name, package_version.version):
                 self._show_dependency_errors(deb_pointer._failure_string, package_version)
 
 
