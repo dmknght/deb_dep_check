@@ -1,18 +1,56 @@
 """
-DebFile.depends:
-[
-  [('name', 'version', 'relation')],
-  [('name', 'version', 'relation')]
-]
-[[('0ad-data', '0.0.23.1', '>=')], [('0ad-data', '0.0.23.1-5', '<=')], [('0ad-data-common', '0.0.23.1', '>=')], [('0ad-data-common', '0.0.23.1-5', '<=')], [('libboost-filesystem1.74.0', '1.74.0', '>=')], [('libc6', '2.29', '>=')], [('libcurl3-gnutls', '7.16.2', '>=')], [('libenet7', '', '')], [('libgcc-s1', '3.4', '>=')], [('libgl1', '', '')], [('libgloox18', '1.0.24', '>=')], [('libicu67', '67.1-1~', '>=')], [('libminiupnpc17', '1.9.20140610', '>=')], [('libnspr4', '2:4.9.2', '>=')], [('libnvtt2', '', '')], [('libopenal1', '1.14', '>=')], [('libpng16-16', '1.6.2-1', '>=')], [('libsdl2-2.0-0', '2.0.12+dfsg1', '>=')], [('libsodium23', '1.0.14', '>=')], [('libstdc++6', '9', '>=')], [('libvorbisfile3', '1.1.2', '>=')], [('libwxbase3.0-0v5', '3.0.5.1+dfsg', '>=')], [('libwxgtk3.0-gtk3-0v5', '3.0.5.1+dfsg', '>=')], [('libx11-6', '', '')], [('libxcursor1', '1.1.2', '>')], [('libxml2', '2.9.0', '>=')], [('zlib1g', '1:1.2.0', '>=')], [('dpkg', '1.15.6~', '>=')]]
-
-Apt.Cache.Versions.dependencies: list(apt.package.Dependency)
-
-Scope: Convert dependenciees of Apt.Cache to DebFile.depends format
+A script to scan current apt cache and find out broken packages
 """
 
 import apt
 import debfile
+
+
+class DebPackage:
+    def __init__(self, cache, package_name):
+        """
+        :param cache: the apt.Cache()
+        :param package_name: name of the package to check
+        """
+        self.package_name = package_name
+        self.cache = cache
+        self.depends = []
+
+    def _iterate_package_versions(self):
+        """
+        Iterate all versions of a package on the repository
+        The data type is <class 'apt.package.Version'>
+        :return:
+        """
+        # Iterate all versions of current package on the repository
+        for current_package_ver in self.cache[self.package_name].versions:
+            yield current_package_ver
+
+    def _get_depends(self, package_version):
+        """
+        Get package's dependency of a package with a specific version. Data type <class 'apt.package.Dependency'>
+        :param package_version: <class 'apt.package.Version'>
+        :return:
+        """
+        for depends in package_version.dependencies:
+            self.depends.append([(x.name, x.version, x.relation) for x in depends])
+
+    def _show_dependency_errors(self, error_string, version):
+        print("Package: ", self.package_name)
+        print("Version: ", version)
+        print(error_string)
+        print("\n")
+
+    def check_package_issue(self):
+        """
+        Call DebPackage to check dependency errors
+        :return:
+        """
+        deb_pointer = debfile.DebPackage()
+        for package_version in self._iterate_package_versions():
+            self._get_depends(package_version)
+            if not deb_pointer.check(self.depends, package_version.architecture, self.package_name, package_version):
+                self._show_dependency_errors(deb_pointer._failure_string, package_version)
 
 
 if __name__ == "__main__":
@@ -21,14 +59,5 @@ if __name__ == "__main__":
     # Possible to pass apt.progress.base.OpProgress() as arg to apt_cache.open to have silent mode
     apt_cache.open(None)
     for pkg in apt_cache:
-        for apt_cache_pkg_version in apt_cache[pkg.name].versions:
-            list_depends = []
-            for real_pkg_depends in apt_cache_pkg_version.dependencies:
-                list_depends.append([(x.name, x.version, x.relation) for x in real_pkg_depends])
-            deb = debfile.DebPackage()
-            if not deb.check(list_depends, apt_cache_pkg_version.architecture, pkg.name, apt_cache_pkg_version.version):
-                print("Package:", pkg.name)
-                print("Version", apt_cache_pkg_version.version)
-                print(deb._failure_string)
-                print("")
-
+        deb_pkg = DebPackage(apt_cache, pkg.name)
+        deb_pkg.check_package_issue()
