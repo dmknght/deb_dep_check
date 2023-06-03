@@ -557,13 +557,13 @@ class DebPackage(object):
         self._failure_string = ""
 
         # check conflicts
-        if not self.check_conflicts():
-            return False
+        # if not self.check_conflicts():
+        #     return False
 
         # check if installing it would break anything on the
         # current system
-        if not self.check_breaks_existing_packages():
-            return False
+        # if not self.check_breaks_existing_packages():
+        #     return False
 
         # try to satisfy the dependencies
         if not self._satisfy_depends(list_deps):
@@ -571,8 +571,8 @@ class DebPackage(object):
 
         # check for conflicts again (this time with the packages that are
         # makeed for install)
-        if not self.check_conflicts():
-            return False
+        # if not self.check_conflicts():
+        #     return False
 
         if self._cache._depcache.broken_count > 0:
             self._failure_string = _("Failed to satisfy all dependencies "
