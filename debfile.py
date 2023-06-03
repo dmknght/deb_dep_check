@@ -239,7 +239,7 @@ class DebPackage(object):
             if dep != or_group[len(or_group) - 1]:
                 or_str += "|"
         self._failure_string += _(
-            "Dependency is not satisfiable: %s\n") % or_str
+            "Dependency is not satisfiable\nErrorPkg: %s") % or_str
         return False
 
     def _check_single_pkg_conflict(self, pkgname, ver, oper):
@@ -606,7 +606,7 @@ class DebPackage(object):
             try:
                 self._cache[pkg].mark_install(from_user=False)
             except SystemError:
-                self._failure_string = _("Cannot install '%s'") % pkg
+                self._failure_string = _("Cannot install\nErrorPkg: %s") % pkg
                 self._cache.clear()
                 return False
         return True
