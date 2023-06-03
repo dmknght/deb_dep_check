@@ -39,7 +39,7 @@ class DebPackage:
         print("Package: ", self.package_name)
         print("Version: ", version)
         print(error_string)
-        print("\n")
+        print("------------------")
 
     def check_package_issue(self):
         """
