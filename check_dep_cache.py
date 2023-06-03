@@ -15,6 +15,7 @@ class DebPackage:
         self.package_name = package_name
         self.cache = cache
         self.depends = []
+        self.check_package_issue()
 
     def _iterate_package_versions(self):
         """
@@ -59,5 +60,4 @@ if __name__ == "__main__":
     # Possible to pass apt.progress.base.OpProgress() as arg to apt_cache.open to have silent mode
     apt_cache.open(None)
     for pkg in apt_cache:
-        deb_pkg = DebPackage(apt_cache, pkg.name)
-        deb_pkg.check_package_issue()
+        DebPackage(apt_cache, pkg.name)
