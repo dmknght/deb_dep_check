@@ -516,7 +516,7 @@ class DebPackage(object):
         return self.VERSION_NONE
 
     def check(self, list_deps, arch, package, version, allow_downgrade=False):
-        # type: (bool) -> bool
+        # return type: (bool) -> bool
         """Check if the package is installable."""
         self._dbg(3, "check")
         self._sections["Architecture"] = arch
